@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GeoPath Project</title>
+</head>
+<body>
+
+    <h2>Shortest Path Finder</h2>
+
+    <form method="POST">
+        <label>Source:</label>
+        <input type="text" name="source" required>
+
+        <label>Destination:</label>
+        <input type="text" name="destination" required>
+
+        <button type="submit">Find Path</button>
+    </form>
+
+    {% if shortest_path %}
+        <h3>Path: {{ shortest_path }}</h3>
+        <h3>Distance: {{ total_distance }}</h3>
+
+        <img src="{{ url_for('static', filename='route.png') }}" width="500">
+    {% endif %}
+
+</body>
+</html>
