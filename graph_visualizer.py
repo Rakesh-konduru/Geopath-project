@@ -1,62 +1,43 @@
-import networkx as nx
-import matplotlib.pyplot as plt
 import os
-print("graph_visualizer loaded")
+import matplotlib
+matplotlib.use('Agg')  # IMPORTANT for Render
+import matplotlib.pyplot as plt
+import networkx as nx
 
-def draw_graph(G, shortest_path=None):
-    print("Inside draw_graph")
-    plt.figure(figsize=(10, 8))
+def draw_graph(G, path=None):
 
-    pos = nx.spring_layout(G, seed=42)
+    plt.figure(figsize=(8, 6))
+
+    pos = nx.spring_layout(G)
 
     # Draw nodes
-    nx.draw_networkx_nodes(
-        G,
-        pos,
-        node_color="skyblue",
-        node_size=2500
-    )
+    nx.draw_networkx_nodes(G, pos, node_color="lightblue", node_size=500)
 
     # Draw edges
-    nx.draw_networkx_edges(
-        G,
-        pos,
-        width=2
-    )
+    nx.draw_networkx_edges(G, pos, edge_color="gray")
 
     # Draw labels
-    nx.draw_networkx_labels(
-        G,
-        pos,
-        font_size=10
-    )
+    nx.draw_networkx_labels(G, pos, font_size=10, font_weight="bold")
 
     # Draw edge weights
-    edge_labels = nx.get_edge_attributes(G, "weight")
-    nx.draw_networkx_edge_labels(
-        G,
-        pos,
-        edge_labels=edge_labels
-    )
+    edge_labels = nx.get_edge_attributes(G, 'weight')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
 
-    # Highlight shortest path
-    if shortest_path:
-        path_edges = list(zip(shortest_path[:-1], shortest_path[1:]))
+    # Highlight shortest path if exists
+    if path:
+        path_edges = list(zip(path, path[1:]))
+        nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color="red", width=2)
 
-        nx.draw_networkx_edges(
-            G,
-            pos,
-            edgelist=path_edges,
-            edge_color="red",
-            width=5
-        )
+    # 🔥 FIX FOR RENDER (absolute path)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    static_dir = os.path.join(base_dir, "static")
 
-    plt.axis("off")
-    plt.tight_layout()
+    if not os.path.exists(static_dir):
+        os.makedirs(static_dir)
 
-    print("Saving image...")
-    static_path = os.path.join("static", "route.png")
-    plt.savefig(static_path)
-    print("Image saved!")
+    file_path = os.path.join(static_dir, "route.png")
 
+    print("Saving image at:", file_path)
+
+    plt.savefig(file_path)
     plt.close()
